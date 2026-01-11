@@ -1,6 +1,6 @@
 import { IsInt, IsString, Min } from 'class-validator';
 
-export class CreateExamDto {
+export class CreateTeamMemberDto {
     @IsString()
     name: string;
 

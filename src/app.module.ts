@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ExamController } from './exam.controller';
-import { ExamService } from './exam.service';
-import { QualifiedService } from './exam.QualifiedService';
+import { TeamMemberController } from './team/controller/team.member.controller';
+import { TEAM_MEMBER_SERVICE } from './team/service/team.member.service.contract';
+import { TeamMemberServiceImpl } from './team/service/team.member.service.impl';
+import { TeamMemberRepository } from './team/repository/team.member.repository';
 
 @Module({
   imports: [
@@ -13,9 +14,7 @@ import { QualifiedService } from './exam.QualifiedService';
       envFilePath: ['.env'],
     }),
   ],
-  controllers: [AppController, ExamController],
-  providers: [AppService
-    , ExamService
-    , {provide: 'QUALIFIED_SERVICE', useClass: QualifiedService}],
+  controllers: [AppController, TeamMemberController],
+  providers: [AppService, { provide: TEAM_MEMBER_SERVICE, useClass: TeamMemberServiceImpl }, TeamMemberRepository]
 })
 export class AppModule {}
