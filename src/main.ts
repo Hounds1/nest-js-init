@@ -3,9 +3,12 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { WrapResponseInterceptor } from './global/interceptors/global.res.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.useGlobalInterceptors(new WrapResponseInterceptor());
 
   app.useGlobalPipes(
     new ValidationPipe({

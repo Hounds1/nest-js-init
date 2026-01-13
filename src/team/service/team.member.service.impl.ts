@@ -9,23 +9,19 @@ import { BaseRes } from "src/global/res/global.base.res";
 export class TeamMemberServiceImpl implements TeamMemberServiceContract {
     constructor(private readonly teamMemberRepository: TeamMemberRepository) {}
 
-    create(dto: CreateTeamMemberDto): BaseRes<TeamMemberDto> {
-        const res = this.teamMemberRepository.create(dto);
-        return BaseRes.exchange(res).addExtension('test', 1234);
+    create(dto: CreateTeamMemberDto): TeamMemberDto {
+        return this.teamMemberRepository.create(dto);
     }
 
-    findAll(): BaseRes<TeamMemberDto[]> {
-        const res = this.teamMemberRepository.findAll();
-        return BaseRes.exchange(res);
+    findAll(): TeamMemberDto[] {
+        return this.teamMemberRepository.findAll();
     }
 
-    findOne(name: string): BaseRes<TeamMemberDto | null> {
-        const res = this.teamMemberRepository.findOne(name);
-        return BaseRes.exchange(res);
+    findOne(name: string): TeamMemberDto | null {
+        return this.teamMemberRepository.findOne(name);
     }
 
-    delete(name: string): BaseRes<boolean> {
-        const result = this.teamMemberRepository.delete(name);
-        return BaseRes.exchange(result);
+    delete(name: string): boolean {
+        return this.teamMemberRepository.delete(name);
     }
 }
