@@ -1,27 +1,31 @@
 import { Injectable } from "@nestjs/common";
 import { CreateTeamMemberDto } from "../dto/team.member.create.dto";
 import { TeamMemberServiceContract } from "./team.member.service.contract";
-import { TeamMemberDto } from "../dto/team.member.res.dto";
+import { TeamMemberDto } from "../dto/team.member.dto";
 import { TeamMemberRepository } from "../repository/team.member.repository";
-import { BaseRes } from "src/global/res/global.base.res";
+import { UpdateTeamMemberDto } from "../dto/tem.member.update.dto";
 
 @Injectable()
 export class TeamMemberServiceImpl implements TeamMemberServiceContract {
     constructor(private readonly teamMemberRepository: TeamMemberRepository) {}
 
-    create(dto: CreateTeamMemberDto): TeamMemberDto {
-        return this.teamMemberRepository.create(dto);
+    async create(dto: CreateTeamMemberDto): Promise<TeamMemberDto> {
+        return await this.teamMemberRepository.create(dto);
     }
 
-    findAll(): TeamMemberDto[] {
-        return this.teamMemberRepository.findAll();
+    async findAll(): Promise<TeamMemberDto[]> {
+        return await this.teamMemberRepository.findAll();
     }
 
-    findOne(name: string): TeamMemberDto | null {
-        return this.teamMemberRepository.findOne(name);
+    async findOne(id: number): Promise<TeamMemberDto | null> {
+        return await this.teamMemberRepository.findOne(id);
     }
 
-    delete(name: string): boolean {
-        return this.teamMemberRepository.delete(name);
+    async update(id: number, dto: UpdateTeamMemberDto): Promise<TeamMemberDto> {
+        return await this.teamMemberRepository.update(id, dto);
+    }
+
+    async delete(id: number): Promise<boolean> {
+        return await this.teamMemberRepository.delete(id);
     }
 }

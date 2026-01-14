@@ -1,27 +1,68 @@
 import { CreateTeamMemberDto } from '../dto/team.member.create.dto';
-import { exchange, TeamMemberDto } from '../dto/team.member.res.dto';
+import { exchange, TeamMemberDto } from '../dto/team.member.dto';
+import { PrismaConnector } from "src/global/prisma/prisma.connector";
+import { Prisma } from '../../generated/prisma/client';
+import { Injectable } from '@nestjs/common';
+import { UpdateTeamMemberDto } from '../dto/tem.member.update.dto';
 
+type TeamMember = {
+  memberId: number;
+  name: string;
+  age: number;
+};
+
+@Injectable()
 export class TeamMemberRepository {
-  private readonly teamMembers: CreateTeamMemberDto[] = [];
+  constructor(private readonly connector: PrismaConnector){}
 
-  create(teamMember: CreateTeamMemberDto): TeamMemberDto {
-    this.teamMembers.push(teamMember);
-    return exchange(teamMember);
+  async create(teamMember: CreateTeamMemberDto): Promise<TeamMemberDto> {
+    const craeted = await this.connector.teamMember.create({
+      data : {
+        name: teamMember.name,
+        age: teamMember.age
+      }
+    });
+
+    return exchange(craeted);
   }
 
-  findAll(): TeamMemberDto[] {
-    return this.teamMembers.map((m) => exchange(m));
+  async findAll(): Promise<TeamMemberDto[]> {
+    return (await this.connector.teamMember.findMany()).map((m) => exchange(m));
   }
 
-  findOne(id: string): TeamMemberDto | null {
-    const found = this.teamMembers.find((m) => m.name === id);
-    return found ? exchange(found) : null;
+  async findOne(id: number): Promise<TeamMemberDto | null> {
+    const found = await this.connector.teamMember.findFirst({
+      where: { memberId: id },
+    });
+
+    if (!found) return null;
+    return exchange(found);
   }
 
-  delete(id: string): boolean {
-    const idx = this.teamMembers.findIndex((m) => m.name === id);
-    if (idx < 0) return false;
-    this.teamMembers.splice(idx, 1);
-    return true;
+  async update(id: number, dto: UpdateTeamMemberDto): Promise<TeamMemberDto> {
+    const updated = await this.connector.teamMember.update({
+      where: { memberId: id },
+      data: {
+        name: dto.name,
+        age: dto.age,
+      },
+    });
+
+    return exchange(updated);
+  }
+
+  async delete(id: number): Promise<boolean> {
+    try {
+      await this.connector.teamMember.delete({
+        where: { memberId: id },
+      });
+
+      return true;
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2025') 
+        return false;
+
+      throw e;
+    }
   }
 }

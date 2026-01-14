@@ -7,3 +7,9 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model TeamMember {
+  memberId Int    @id @default(autoincrement())
+  name     String
+  age      Int
+}
